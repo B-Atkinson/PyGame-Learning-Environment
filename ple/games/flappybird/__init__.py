@@ -36,6 +36,7 @@ class BirdPlayer(pygame.sprite.Sprite):
 
         self.rng = rng
 
+        #TODO - adjust function call
         self._oscillateStartPos()  # makes the direction and position random
         self.rect.center = (self.pos_x, self.pos_y)  # could be done better
 
@@ -52,6 +53,7 @@ class BirdPlayer(pygame.sprite.Sprite):
         self.pos_y = init_pos[1]
 
     def _oscillateStartPos(self):
+        #TODO - add seed to rand function call for offset
         offset = 8 * np.sin(self.rng.rand() * np.pi)
         self.pos_y += offset
 
@@ -349,6 +351,7 @@ class FlappyBird(base.PyGameWrapper):
         return self.score
 
     def _generatePipes(self, offset=0, pipe=None):
+        #TODO - add seed to start_gap?
         start_gap = self.rng.random_integers(
             self.pipe_min,
             self.pipe_max
