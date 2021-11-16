@@ -124,6 +124,12 @@ class PyGameWrapper(object):
     def setRNG(self, rng):
         """
         Sets the rng for games.
+
+        Parameters
+        ----------
+        rng : Numpy Generator object (default: None)
+            Used to generate the original numpy BitGenerator state, which provides all random numbers
+
         """
 
         if self.rng is None:

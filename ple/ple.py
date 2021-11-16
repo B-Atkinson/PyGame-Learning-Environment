@@ -112,12 +112,12 @@ class PLE(object):
         if reward_values:
             self.game.adjustRewards(reward_values)
 
-
+        # TODO - see if need to implement np.random.default_rng here as well
         if isinstance(self.game, PyGameWrapper):
-            if isinstance(rng, np.random.RandomState):
+            if isinstance(rng, np.random.Generator):
                 self.rng = rng
             else:
-                self.rng = np.random.RandomState(rng)
+                self.rng = np.random.default_rng(rng)
 
             # some pygame games preload the images
             # to speed resetting and inits up.

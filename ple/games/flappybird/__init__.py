@@ -54,7 +54,8 @@ class BirdPlayer(pygame.sprite.Sprite):
 
     def _oscillateStartPos(self):
         #TODO - add seed to rand function call for offset
-        offset = 8 * np.sin(self.rng.rand() * np.pi)
+        ## changed 'rand' to 'random' to work with new rng method
+        offset = 8 * np.sin(self.rng.random() * np.pi)
         self.pos_y += offset
 
     def flap(self):
@@ -183,9 +184,11 @@ class FlappyBird(base.PyGameWrapper):
     pipe_gap : int (default: 100)
         The gap in pixels left between the top and bottom pipes.
 
+    rngSeed : int (default: 42)
+
     """
 
-    def __init__(self, width=288, height=512, pipe_gap=100):
+    def __init__(self, width=288, height=512, pipe_gap=100, rngSeed=42):
 
         actions = {
             "up": K_w
@@ -193,7 +196,11 @@ class FlappyBird(base.PyGameWrapper):
 
         fps = 30
 
+        # TODO -verify this seed implementation
         base.PyGameWrapper.__init__(self, width, height, actions=actions)
+        
+        #set the random number generator object to create reproducibility in code
+        base.PyGameWrapper.setRNG(np.random.default_rng(rngSeed))
 
         self.scale = 30.0 / fps
 
