@@ -44,7 +44,7 @@ class PyGameWrapper(object):
         self.screen_dim = (width, height)  # width and height
         self.allowed_fps = None  # fps that the game is allowed to run at.
         self.NOOP = K_F15  # the noop key
-        self.rng = np.random.default_rng(42)
+        self.rng = None
 
         self.rewards = {
             "positive": 1.0,

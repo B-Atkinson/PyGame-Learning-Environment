@@ -11,7 +11,7 @@ class BirdPlayer(pygame.sprite.Sprite):
 
     def __init__(self,
                  SCREEN_WIDTH, SCREEN_HEIGHT, init_pos,
-                 image_assets, rng=np.random.default_rng(42), color="red", scale=1.0):
+                 image_assets, rng, color="red", scale=1.0):
 
         self.SCREEN_WIDTH = SCREEN_WIDTH
         self.SCREEN_HEIGHT = SCREEN_HEIGHT
@@ -121,10 +121,6 @@ class Pipe(pygame.sprite.Sprite):
         self.image.fill((0, 0, 0))
         self.gap_start = gap_start
         self.x = self.SCREEN_WIDTH + self.width + offset
-        
-        with open('output_1.txt','a') as file:
-            string = 'pipe x: '+str(self.x)+'\n'
-            file.write(string)
 
         self.lower_pipe = self.image_assets[color]["lower"]
         self.upper_pipe = self.image_assets[color]["upper"]
@@ -204,9 +200,8 @@ class FlappyBird(base.PyGameWrapper):
         base.PyGameWrapper.__init__(self, width, height, actions=actions)
         
         #set the random number generator object to create reproducibility in code
-        #base.PyGameWrapper.setRNG(np.random.default_rng(rngSeed))
-        #base.PyGameWrapper.setRNG(42)
-        
+        base.PyGameWrapper.setRNG(np.random.default_rng(rngSeed))
+
         self.scale = 30.0 / fps
 
         self.allowed_fps = 30  # restrict the fps
@@ -364,7 +359,7 @@ class FlappyBird(base.PyGameWrapper):
 
     def _generatePipes(self, offset=0, pipe=None):
         #TODO - add seed to start_gap?
-        start_gap = self.rng.integers(
+        start_gap = self.rng.random_integers(
             self.pipe_min,
             self.pipe_max
         )
@@ -380,11 +375,7 @@ class FlappyBird(base.PyGameWrapper):
                 color=self.pipe_color,
                 offset=offset
             )
-            
-            with open('output_1.txt','a') as file:
-                string = 'pipe start: {0} gap: {1}\n'.format(start_gap,self.pipe_gap)
-                file.write(string)   
-                
+
             return pipe
         else:
             pipe.init(start_gap, self.pipe_gap, offset, self.pipe_color)
