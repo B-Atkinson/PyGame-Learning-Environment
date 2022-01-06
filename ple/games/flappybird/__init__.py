@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import Generator
 import numpy as np
 
 import pygame
@@ -11,7 +12,7 @@ class BirdPlayer(pygame.sprite.Sprite):
 
     def __init__(self,
                  SCREEN_WIDTH, SCREEN_HEIGHT, init_pos,
-                 image_assets, rng=np.random.default_rng(42), color="red", scale=1.0):
+                 image_assets, rng=24, color="red", scale=1.0):
 
         self.SCREEN_WIDTH = SCREEN_WIDTH
         self.SCREEN_HEIGHT = SCREEN_HEIGHT
@@ -34,7 +35,7 @@ class BirdPlayer(pygame.sprite.Sprite):
         self.MAX_DROP_SPEED = 10.0
         self.GRAVITY = 1.0 * self.scale
 
-        self.rng = rng
+        self.rng = np.random.RandomState(rng)
 
         #TODO - adjust function call
         self._oscillateStartPos()  # makes the direction and position random
@@ -202,6 +203,13 @@ class FlappyBird(base.PyGameWrapper):
 
         # TODO -verify this seed implementation
         base.PyGameWrapper.__init__(self, width, height, actions=actions)
+        if type(rngSeed) == int:
+            self.rng = np.random.RandomState(rngSeed)
+        elif type(rngSeed) == np.random.RandomState:
+            self.rng = rngSeed
+        else:
+            raise Exception('Flappybird RNG setting failed with rngSeed: {0}'.format(rngSeed))
+
         
         #set the random number generator object to create reproducibility in code
         #base.PyGameWrapper.setRNG(np.random.default_rng(rngSeed))
@@ -340,6 +348,8 @@ class FlappyBird(base.PyGameWrapper):
 
         next_pipe = pipes[1][0]
         next_next_pipe = pipes[0][0]
+        
+        
 
         if next_next_pipe.x < next_pipe.x:
             next_pipe, next_next_pipe = next_next_pipe, next_pipe
@@ -357,6 +367,11 @@ class FlappyBird(base.PyGameWrapper):
             "next_next_pipe_bottom_y": next_next_pipe.gap_start + self.pipe_gap
         }
 
+        with open('pipes_1.txt','a') as fd:
+            fd.write('\npipe set\n')
+            fd.write('next pipe bottom: {0}  top: {1}\n'.format(state["next_pipe_bottom_y"], state["next_pipe_top_y"]))
+            fd.write('next next pipe bottom: {0}  top: {1}\n'.format(state["next_next_pipe_bottom_y"], state["next_next_pipe_top_y"]))
+        
         return state
 
     def getScore(self):
@@ -364,9 +379,9 @@ class FlappyBird(base.PyGameWrapper):
 
     def _generatePipes(self, offset=0, pipe=None):
         #TODO - add seed to start_gap?
-        start_gap = self.rng.integers(
-            self.pipe_min,
-            self.pipe_max
+        start_gap = self.rng.random_integers(
+            low=self.pipe_min,
+            high=self.pipe_max
         )
 
         if pipe is None:
@@ -382,7 +397,7 @@ class FlappyBird(base.PyGameWrapper):
             )
             
             with open('output_1.txt','a') as file:
-                string = 'pipe start: {0} gap: {1}\n'.format(start_gap,self.pipe_gap)
+                string = 'pipe start: {0} offset: {1}\n'.format(start_gap,offset)
                 file.write(string)   
                 
             return pipe

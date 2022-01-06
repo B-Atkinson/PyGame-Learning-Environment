@@ -114,10 +114,10 @@ class PLE(object):
 
         # TODO - see if need to implement np.random.default_rng here as well
         if isinstance(self.game, PyGameWrapper):
-            if isinstance(rng, np.random.Generator):
+            if isinstance(rng, np.random.RandomState):
                 self.rng = rng
             else:
-                self.rng = np.random.default_rng(rng)
+                self.rng = np.random.RandomState(rng)
 
             # some pygame games preload the images
             # to speed resetting and inits up.
@@ -164,7 +164,7 @@ class PLE(object):
         This method should be explicitly called.
         """
         self.game._setup()
-        self.game.init() #this is the games setup/init
+        self.game.init() #this is the games setup/init; see line 270 of flappybird.__init__.py
 
     def getActionSet(self):
         """
